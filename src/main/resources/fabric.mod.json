@@ -8,8 +8,7 @@
 		"Acushii"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Acushii/wynncraft-market-price-helper"
 	},
 	"license": "MIT",
 	"icon": "assets/wynncraft-market-price-helper/icon.png",
