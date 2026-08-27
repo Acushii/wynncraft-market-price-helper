@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "wynncraft-market-price-helper",
+	"version": "${version}",
+	"name": "Wynncraft Market Price Helper",
+	"description": "A mod that displays the item price before 5% Trade Market tax on Wynncraft.",
+	"authors": [
+		"Acushii"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/wynncraft-market-price-helper/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.acushii.markethelper.client.WynncraftMarketPriceHelperClient"
+		],
+		"modmenu": [
+			"com.acushii.markethelper.client.config.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"wynncraft-market-price-helper.mixins.json",
+		{
+			"config": "wynncraft-market-price-helper.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
