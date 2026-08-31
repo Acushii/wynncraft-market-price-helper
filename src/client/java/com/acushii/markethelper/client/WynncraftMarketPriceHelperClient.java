@@ -177,7 +177,13 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		                        	"text":"Pre-tax price: ",
 		                        	"extra":[
 		                        		{
-											"text":"%s² ",
+											"text":"%s",
+											"extra":[
+												{
+													"text":"² ",
+													"color":"%s"
+												}
+											],
 											"color":"%s"
 										}
 									],
@@ -195,7 +201,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		    "color":"white",
 		    "italic":false
 		}
-		""".formatted(spacePrefix, formattedPrice, primaryColor, secondaryColor, font);
+		""".formatted(spacePrefix, formattedPrice, secondaryColor, primaryColor, secondaryColor, font);
 
 		return parseJsonToComponent(rawJson);
 	}
