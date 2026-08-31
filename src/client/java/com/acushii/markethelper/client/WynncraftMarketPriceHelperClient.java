@@ -7,9 +7,11 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
 import java.text.NumberFormat;
@@ -29,6 +31,10 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
 			Minecraft client = Minecraft.getInstance();
 			if (client.screen == null) return;
+			if (client.screen instanceof AbstractContainerScreen<?> containerScreen) {
+				Slot firstSlot = containerScreen.getMenu().slots.getFirst();
+				if (!firstSlot.hasItem()) return;
+			}
 			processTooltip(lines, stack);
 		});
 	}
