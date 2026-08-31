@@ -7,8 +7,11 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -26,11 +29,11 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
 			Minecraft client = Minecraft.getInstance();
 			if (client.screen == null) return;
-			processTooltip(lines);
+			processTooltip(lines, stack);
 		});
 	}
 
-	private void processTooltip(List<Component> loreLines) {
+	private void processTooltip(List<Component> loreLines, ItemStack stack) {
 		// Make sure the lore exists and is not empty
 		if (loreLines == null || loreLines.isEmpty()) return;
 
@@ -58,6 +61,21 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 			return;
 		}
 
+		// Check if the hovered over item is a confirmation button on Trade Market
+		if (priceLineText.contains("each")) {
+			return;
+		}
+
+		// Find the font used in the tooltip
+		boolean usesCustomFont = checkIfCustomFont(stack, priceLineIndex);
+		String font;
+		if (usesCustomFont) {
+			font = "minecraft:language/wynncraft";
+		}
+		else {
+			font = "minecraft:default";
+		}
+
 		// Grab the price from the lore and parse it into an integer
 		int fullPrice = parsePrice(priceLineText);
 
@@ -70,7 +88,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		boolean hasLeadingSpace = priceLineText.startsWith("\uDB00\uDC05");
 
 		// Create a new lore line and add it into the item lore
-		Component newLine = buildLineFromJson(fullPrice, hasLeadingSpace);
+		Component newLine = buildLineFromJson(fullPrice, hasLeadingSpace, font);
 
 		if (newLine != null) {
 			loreLines.add(priceLineIndex + 1, newLine);
@@ -93,7 +111,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		return number;
 	}
 
-	private Component buildLineFromJson(int fullPrice, boolean hasLeadingSpace) {
+	private Component buildLineFromJson(int fullPrice, boolean hasLeadingSpace, String font) {
 		ModConfig config = ModConfig.get();
 
 		// Emeralds calculations
@@ -157,7 +175,8 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 											"color":"%s"
 										}
 									],
-									"color":"%s"
+									"color":"%s",
+									"font":"%s"
 		                        }
 		                    ],
 		                    "color":"white",
@@ -170,7 +189,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		    "color":"white",
 		    "italic":false
 		}
-		""".formatted(spacePrefix, formattedPrice, primaryColor, secondaryColor);
+		""".formatted(spacePrefix, formattedPrice, primaryColor, secondaryColor, font);
 
 		return parseJsonToComponent(rawJson);
 	}
@@ -186,5 +205,22 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	boolean checkIfCustomFont(ItemStack stack, int lineNumber) {
+		ItemLore lore = stack.get(DataComponents.LORE);
+		if (lore == null) {
+			return false;
+		}
+
+		Component lineText = lore.lines().get(lineNumber);
+
+		JsonElement loreJson = ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, lineText).result().orElse(null);
+		if (loreJson == null) {
+			return false;
+		}
+
+		String loreJsonText = loreJson.toString();
+		return loreJsonText.contains("minecraft:language/wynncraft");
 	}
 }
