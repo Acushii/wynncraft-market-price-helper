@@ -69,6 +69,14 @@ jar {
 	}
 }
 
+tasks.named("remapJar") {
+	archiveFileName = "${project.name}-${project.version}+mc${project.minecraft_version}.jar"
+}
+
+tasks.named('remapSourcesJar') {
+	archiveFileName = "${project.name}-${project.version}+mc${project.minecraft_version}-sources.jar"
+}
+
 // configure the maven publication
 publishing {
 	publications {
