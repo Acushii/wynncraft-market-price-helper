@@ -72,6 +72,16 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 			return;
 		}
 
+		// Check if player is browsing housing items in Housing Master
+		for (int i = 0; i < loreLines.size(); i++) {
+			String currentLineText = loreLines.get(i).getString();
+			if (currentLineText.contains("be available in your Liquid Wand") ||
+			    currentLineText.contains("available in your Block Inventory") ||
+				currentLineText.contains("the NPC to despawn them")) {
+				return;
+			}
+		}
+
 		// Find the font used in the tooltip
 		boolean usesCustomFont = checkIfCustomFont(stack, priceLineIndex);
 		String font;
