@@ -32,6 +32,8 @@ public class ModConfig {
     public DisplayMode displayMode = DisplayMode.INTEGER;
     public ChatFormatting primaryColor = ChatFormatting.WHITE;
     public ChatFormatting secondaryColor = ChatFormatting.GRAY;
+    public int taxRatePercent = 5;
+    public Boolean globalToggle = true;
 
     private static ModConfig INSTANCE;
 
@@ -44,16 +46,20 @@ public class ModConfig {
     }
 
     public static ModConfig load() {
+        ModConfig config = null;
+
         if (CONFIG_FILE.exists()) {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
-                ModConfig config = GSON.fromJson(reader, ModConfig.class);
-                if (config != null) return config;
+                config = GSON.fromJson(reader, ModConfig.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        ModConfig config = new ModConfig();
+        if (config == null) {
+            config = new ModConfig();
+        }
+
         config.save();
         return config;
     }

@@ -27,6 +27,29 @@ public class ModMenuIntegration implements ModMenuApi {
             ConfigCategory general = builder.getOrCreateCategory(Component.literal("General"));
             ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
+            // Global toggle
+            general.addEntry(entryBuilder.startBooleanToggle(
+                    Component.literal("Global Mod Toggle"),
+                    config.globalToggle
+            )
+            .setDefaultValue(true)
+            .setTooltip(Component.literal("Enable or disable the mod at your wish."))
+            .setYesNoTextSupplier(bool -> bool ? Component.literal("Enabled").withStyle(ChatFormatting.GREEN) : Component.literal("Disabled").withStyle(ChatFormatting.RED))
+            .setSaveConsumer(val -> config.globalToggle = val)
+            .build());
+
+            // Tax rate
+            general.addEntry(entryBuilder.startSelector(
+                    Component.literal("Trade Market Tax Rate"),
+                    new Integer[]{3, 5},
+                    config.taxRatePercent
+            )
+            .setNameProvider(val -> Component.literal(val + "%"))
+            .setDefaultValue(5)
+            .setTooltip(Component.literal("Choose whether your Tax Rate is at 3% (with Silverbull) or at 5% (without Silverbull)."))
+            .setSaveConsumer(val -> config.taxRatePercent = val)
+            .build());
+
             // Display Mode selector
             general.addEntry(entryBuilder.startEnumSelector(
                     Component.literal("Price Display Mode"),
@@ -46,6 +69,7 @@ public class ModMenuIntegration implements ModMenuApi {
             )
             .setNameProvider(color -> Component.literal(formatColorName(color)).withStyle(color))
             .setDefaultValue(ChatFormatting.WHITE)
+            .setTooltip(Component.literal("Choose the color of the calculated pre-tax price in the tooltip."))
             .setSaveConsumer(val -> config.primaryColor = val)
             .build());
 
@@ -57,6 +81,7 @@ public class ModMenuIntegration implements ModMenuApi {
             )
             .setNameProvider(color -> Component.literal(formatColorName(color)).withStyle(color))
             .setDefaultValue(ChatFormatting.GRAY)
+            .setTooltip(Component.literal("Choose the color of the \"Pre-tax price\" string along with the emerald sign after the calculated price in the tooltip."))
             .setSaveConsumer(val -> config.secondaryColor = val)
             .build());
 

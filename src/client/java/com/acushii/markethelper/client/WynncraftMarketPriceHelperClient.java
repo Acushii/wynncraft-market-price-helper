@@ -29,6 +29,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// Runs right before rendering any tooltip on screen
 		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
+			if (!ModConfig.get().globalToggle) return;
 			Minecraft client = Minecraft.getInstance();
 			if (client.screen == null) return;
 			if (client.screen instanceof AbstractContainerScreen<?> containerScreen) {
@@ -130,8 +131,16 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 	private Component buildLineFromJson(int fullPrice, boolean hasLeadingSpace, String font) {
 		ModConfig config = ModConfig.get();
 
+		double taxRate;
+		if (config.taxRatePercent == 3) {
+			taxRate = 1.03;
+		}
+		else {
+			taxRate = 1.05;
+		}
+
 		// Emeralds calculations
-		double preTaxPriceDouble = (double)fullPrice / 1.05;
+		double preTaxPriceDouble = (double)fullPrice / taxRate;
 		int preTaxPriceInt = (int)preTaxPriceDouble;
 
 		if (preTaxPriceDouble < 1) {
