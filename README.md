@@ -15,4 +15,4 @@ The mod automatically injects a line into the item lore whenever it detects the 
   * Decimal
 * Color of the output
 
-![Calculated pre-tax price showing under actual price of the item](./src/main/resources/assets/wynncraft-market-price-helper/MarketHelperScreenshot1.png)
+![Calculated pre-tax price showing under actual price of the item](./src/main/resources/assets/wynncraft-market-price-helper/MarketHelper-Screenshot1.png)
