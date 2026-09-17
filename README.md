@@ -1,12 +1,15 @@
 # Wynncraft Market Price Helper
 
 ## Description
-This mod is designed to use on Wynncraft server in Minecraft. It adds a line to the item lore of items in the Trade Market indicating the initial price of the item - before the 5% Trade Market tax.
+This mod is designed to use on Wynncraft server in Minecraft. It adds a line to the item lore of items in the Trade Market indicating the initial price of the item - before the Trade Market tax.
 
 Makes it useful for when you want to calculate the item price needed to undercut the currently cheapest available offer.
 
 ## Usage
 The mod automatically injects a line into the item lore whenever it detects the item is a listing while hovering over it. The player can customize:
+* Tax rate used in calculations
+  * 3% (with Silverbull subscription)
+  * 5% (without Silverbull subscription)
 * Type of the output
   * Integer (truncated)
   * Decimal

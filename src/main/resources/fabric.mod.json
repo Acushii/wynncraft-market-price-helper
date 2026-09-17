@@ -3,7 +3,7 @@
 	"id": "wynncraft-market-price-helper",
 	"version": "${version}",
 	"name": "Wynncraft Market Price Helper",
-	"description": "A mod that displays the item price before 5% Trade Market tax on Wynncraft.",
+	"description": "A mod that displays the item price before Trade Market tax on Wynncraft.",
 	"authors": [
 		"Acushii"
 	],
