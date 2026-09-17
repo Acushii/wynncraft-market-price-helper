@@ -147,7 +147,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 			formattedPrice = NumberFormat.getNumberInstance(Locale.US).format(preTaxPriceInt);
 		}
 		else {
-			formattedPrice = String.format(Locale.US, "%.2f", preTaxPriceDouble);
+			formattedPrice = String.format(Locale.US, "%,.2f", preTaxPriceDouble);
 		}
 
 		// Colors
