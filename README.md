@@ -6,7 +6,7 @@ This mod is designed to be used on Wynncraft server in Minecraft. It adds a line
 Makes it useful for when you want to calculate the item price needed to undercut the currently cheapest available offer.
 
 ## Usage
-The mod automatically injects a line into the item lore whenever it detects the item is a Trade Market listing while hovering over it. The player can customize:
+The mod automatically injects a line into the item lore whenever it detects the item is a Trade Market listing while hovering over it. Within the mod menu the player can customize:
 * Tax rate used in calculations
   * 3% (with Silverbull subscription)
   * 5% (without Silverbull subscription)
