@@ -32,7 +32,6 @@ public class ModConfig {
     public DisplayMode displayMode = DisplayMode.INTEGER;
     public ChatFormatting primaryColor = ChatFormatting.WHITE;
     public ChatFormatting secondaryColor = ChatFormatting.GRAY;
-    public int taxRatePercent = 5;
     public Boolean globalToggle = true;
 
     private static ModConfig INSTANCE;

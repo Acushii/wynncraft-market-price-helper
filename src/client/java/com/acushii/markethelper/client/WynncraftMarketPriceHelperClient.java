@@ -131,16 +131,8 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 	private Component buildLineFromJson(int fullPrice, boolean hasLeadingSpace, String font) {
 		ModConfig config = ModConfig.get();
 
-		double taxRate;
-		if (config.taxRatePercent == 3) {
-			taxRate = 1.03;
-		}
-		else {
-			taxRate = 1.05;
-		}
-
 		// Emeralds calculations
-		double preTaxPriceDouble = (double)fullPrice / taxRate;
+		double preTaxPriceDouble = (double)fullPrice / 1.05;
 		int preTaxPriceInt = (int)preTaxPriceDouble;
 
 		if (preTaxPriceDouble < 1) {

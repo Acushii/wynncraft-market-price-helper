@@ -38,18 +38,6 @@ public class ModMenuIntegration implements ModMenuApi {
             .setSaveConsumer(val -> config.globalToggle = val)
             .build());
 
-            // Tax rate
-            general.addEntry(entryBuilder.startSelector(
-                    Component.literal("Trade Market Tax Rate"),
-                    new Integer[]{3, 5},
-                    config.taxRatePercent
-            )
-            .setNameProvider(val -> Component.literal(val + "%"))
-            .setDefaultValue(5)
-            .setTooltip(Component.literal("Choose whether your Tax Rate is at 3% (with Silverbull) or at 5% (without Silverbull)."))
-            .setSaveConsumer(val -> config.taxRatePercent = val)
-            .build());
-
             // Display Mode selector
             general.addEntry(entryBuilder.startEnumSelector(
                     Component.literal("Price Display Mode"),
