@@ -7,9 +7,6 @@ Makes it useful for when you want to calculate the item price needed to undercut
 
 ## Usage
 The mod automatically injects a line into the item lore whenever it detects the item is a Trade Market listing while hovering over it. Within the mod menu the player can customize:
-* Tax rate used in calculations
-  * 3% (with Silverbull subscription)
-  * 5% (without Silverbull subscription)
 * Display type
   * Integer (truncated)
   * Decimal
