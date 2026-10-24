@@ -8,12 +8,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemLore;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -22,8 +20,9 @@ import java.util.regex.Pattern;
 
 
 public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
-	private static final Pattern pricePattern = Pattern.compile("(?:[0-9]+\\s*x\\s*)?([0-9]{1,3}(?:,[0-9]{3})*)");
+	private static final Pattern pricePattern = Pattern.compile("(?:[0-9]+\\s*x\\s*)?([0-9]{1,3}(?:,[0-9]{3})*)\\s*²");
 	private static final String flagString = "Pre-tax";
+	private static final NumberFormat integerFormatter = NumberFormat.getIntegerInstance(Locale.US);
 
 	@Override
 	public void onInitializeClient() {
@@ -44,48 +43,40 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		// Make sure the lore exists and is not empty
 		if (loreLines == null || loreLines.isEmpty()) return;
 
-		// Prevent duplicates
-		for (Component line : loreLines) {
-			if (line.getString().contains(flagString)) {
-				return;
-			}
-		}
+		// Find the index of the line containing the price of the item
+		int priceLineIndex = -1;
+		String priceLineText = "";
 
-		// Check if player is browsing housing items in Housing Master or finalizing a payment in the store
+		// Check if the item was already flagged or the player is browsing housing items in
+		// Housing Master or is finalizing a payment in the in-game store
 		for (int i = 0; i < loreLines.size(); i++) {
 			String currentLineText = loreLines.get(i).getString();
-			if (currentLineText.contains("be available in your Liquid Wand") ||
+			if (currentLineText.contains(flagString) ||
+					currentLineText.contains("be available in your Liquid Wand") ||
 					currentLineText.contains("available in your Block Inventory") ||
 					currentLineText.contains("the NPC to despawn them") ||
 					currentLineText.contains("Click to Pay")) {
 				return;
 			}
-		}
 
-		// Find the index of the line containing the price of the item
-		int priceLineIndex = -1;
-		String priceLineText = "";
-
-		for (int i = 0; i < loreLines.size(); i++) {
-			String currentLineText = loreLines.get(i).getString();
-			if (currentLineText.contains("Price") && i + 1 < loreLines.size()) {
-				priceLineIndex = i + 1;
-				priceLineText = loreLines.get(priceLineIndex).getString();
-				break;
+			if (priceLineIndex == -1 && currentLineText.contains("Price") && i + 1 < loreLines.size()) {
+				// Check if the hovered over item is a confirmation button on Trade Market or is
+				// even a price at all
+				String text = loreLines.get(i + 1).getString();
+				if (!text.contains("each") && text.contains("²")) {
+					priceLineIndex = i + 1;
+					priceLineText = text;
+				}
 			}
 		}
 
-		if (priceLineIndex == -1 || priceLineText.isEmpty()) {
-			return;
-		}
-
-		// Check if the hovered over item is a confirmation button on Trade Market
-		if (priceLineText.contains("each")) {
+		// Ensure the line was found
+		if (priceLineIndex == -1) {
 			return;
 		}
 
 		// Find the font used in the tooltip
-		boolean usesCustomFont = checkIfCustomFont(stack, priceLineIndex);
+		boolean usesCustomFont = checkIfCustomFont(loreLines.get(priceLineIndex));
 		String font;
 		if (usesCustomFont) {
 			font = "minecraft:language/wynncraft";
@@ -146,7 +137,7 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		// Format the string so it's the same as in Wynncraft
 		String formattedPrice;
 		if (config.displayMode == ModConfig.DisplayMode.INTEGER) {
-			formattedPrice = NumberFormat.getNumberInstance(Locale.US).format(preTaxPriceInt);
+			formattedPrice = integerFormatter.format(preTaxPriceInt);
 		}
 		else {
 			formattedPrice = String.format(Locale.US, "%,.2f", preTaxPriceDouble);
@@ -231,20 +222,16 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		}
 	}
 
-	boolean checkIfCustomFont(ItemStack stack, int lineNumber) {
-		ItemLore lore = stack.get(DataComponents.LORE);
-		if (lore == null) {
+	boolean checkIfCustomFont(Component line) {
+		if (line == null) {
 			return false;
 		}
 
-		Component lineText = lore.lines().get(lineNumber);
-
-		JsonElement loreJson = ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, lineText).result().orElse(null);
+		JsonElement loreJson = ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, line).result().orElse(null);
 		if (loreJson == null) {
 			return false;
 		}
 
-		String loreJsonText = loreJson.toString();
-		return loreJsonText.contains("minecraft:language/wynncraft");
+		return loreJson.toString().contains("minecraft:language/wynncraft");
 	}
 }
