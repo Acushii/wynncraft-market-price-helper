@@ -51,6 +51,17 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 			}
 		}
 
+		// Check if player is browsing housing items in Housing Master or finalizing a payment in the store
+		for (int i = 0; i < loreLines.size(); i++) {
+			String currentLineText = loreLines.get(i).getString();
+			if (currentLineText.contains("be available in your Liquid Wand") ||
+					currentLineText.contains("available in your Block Inventory") ||
+					currentLineText.contains("the NPC to despawn them") ||
+					currentLineText.contains("Click to Pay")) {
+				return;
+			}
+		}
+
 		// Find the index of the line containing the price of the item
 		int priceLineIndex = -1;
 		String priceLineText = "";
@@ -71,16 +82,6 @@ public class WynncraftMarketPriceHelperClient implements ClientModInitializer {
 		// Check if the hovered over item is a confirmation button on Trade Market
 		if (priceLineText.contains("each")) {
 			return;
-		}
-
-		// Check if player is browsing housing items in Housing Master
-		for (int i = 0; i < loreLines.size(); i++) {
-			String currentLineText = loreLines.get(i).getString();
-			if (currentLineText.contains("be available in your Liquid Wand") ||
-			    currentLineText.contains("available in your Block Inventory") ||
-				currentLineText.contains("the NPC to despawn them")) {
-				return;
-			}
 		}
 
 		// Find the font used in the tooltip
