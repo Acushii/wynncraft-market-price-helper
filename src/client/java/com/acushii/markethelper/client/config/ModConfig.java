@@ -4,14 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 
 public class ModConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("wynncraft-market-helper.json").toFile();
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("wynncraft-market-helper.json");
 
     public enum DisplayMode {
         INTEGER("Integer"),
@@ -32,7 +33,7 @@ public class ModConfig {
     public DisplayMode displayMode = DisplayMode.INTEGER;
     public ChatFormatting primaryColor = ChatFormatting.WHITE;
     public ChatFormatting secondaryColor = ChatFormatting.GRAY;
-    public Boolean globalToggle = true;
+    public boolean globalToggle = true;
 
     private static ModConfig INSTANCE;
 
@@ -47,16 +48,20 @@ public class ModConfig {
     public static ModConfig load() {
         ModConfig config = null;
 
-        if (CONFIG_FILE.exists()) {
-            try (FileReader reader = new FileReader(CONFIG_FILE)) {
+        if (Files.exists(CONFIG_PATH)) {
+            try (BufferedReader reader = Files.newBufferedReader(CONFIG_PATH, StandardCharsets.UTF_8)) {
                 config = GSON.fromJson(reader, ModConfig.class);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                System.err.println("[Wynncraft Market Price Helper] Failed to load config, resetting to default: " + e.getMessage());
             }
         }
 
         if (config == null) {
             config = new ModConfig();
+        } else {
+            if (config.displayMode == null) config.displayMode = DisplayMode.INTEGER;
+            if (config.primaryColor == null) config.primaryColor = ChatFormatting.WHITE;
+            if (config.secondaryColor == null) config.secondaryColor = ChatFormatting.GRAY;
         }
 
         config.save();
@@ -64,10 +69,13 @@ public class ModConfig {
     }
 
     public void save() {
-        try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
-            GSON.toJson(this, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
+        try {
+            Files.createDirectories(CONFIG_PATH.getParent());
+            try (BufferedWriter writer = Files.newBufferedWriter(CONFIG_PATH, StandardCharsets.UTF_8)) {
+                GSON.toJson(this, writer);
+            }
+        } catch (Exception e) {
+            System.err.println("[Wynncraft Market Price Helper] Failed to write config: " + e.getMessage());
         }
     }
 }

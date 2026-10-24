@@ -82,11 +82,12 @@ public class ModMenuIntegration implements ModMenuApi {
     private static String formatColorName(ChatFormatting color) {
         String[] parts = color.getName().split("_");
         StringBuilder sb = new StringBuilder();
-        for (String part : parts) {
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
             if (!part.isEmpty()) {
                 sb.append(Character.toUpperCase(part.charAt(0)))
-                    .append(part.substring(1).toLowerCase())
-                    .append(" ");
+                    .append(part.substring(1).toLowerCase());
+                if (i < parts.length - 1) sb.append(' ');
             }
         }
         return sb.toString().trim();
